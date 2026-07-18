@@ -1836,10 +1836,22 @@ async function approveConsent(){
   setButtonLoading(btn, 'Creating account…');
   try {
     if(!supabaseClient) throw new Error("Couldn't connect to the database.");
-    const { data, error } = await supabaseClient.functions.invoke('approve-consent', {
-      body: { token: activeConsentToken }
+    // Raw fetch instead of supabase-js's functions.invoke wrapper — that
+    // wrapper doesn't reliably expose the real response body on failure.
+    const resp = await fetch(SUPABASE_URL + '/functions/v1/approve-consent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({ token: activeConsentToken })
     });
-    if(error) throw error;
+    var data = {};
+    try { data = await resp.json(); } catch(parseErr){ /* leave data as {} */ }
+    if(!resp.ok){
+      throw new Error(data.error || ('Request failed with status ' + resp.status));
+    }
     if(data && data.error) throw new Error(data.error);
 
     var successEl = document.getElementById('parent-consent-success');
