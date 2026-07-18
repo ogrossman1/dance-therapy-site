@@ -85,6 +85,18 @@ canvas.brain:active { cursor: grabbing; }
 #auth-modal-overlay .section-heading { font-size: 20px; }
 #auth-modal-overlay .body-text { font-size: 14px; }
 .skip-link { width: 100%; background: none; border: none; color: #888; font-size: 11px; margin-top: 10px; text-decoration: underline; cursor: pointer; font-family: inherit; padding: 4px; }
+/* MOBILE NAV FIX — prevents the nav bar (logo + links + Log in button)
+   from overflowing off the edge of narrow phone screens. Without this,
+   flexbox keeps every nav item on one line and just extends sideways
+   past the viewport instead of wrapping, which pushes buttons like
+   "Log in" out of reach. */
+html, body { overflow-x: hidden; max-width: 100%; }
+@media (max-width: 640px) {
+  .nav { flex-wrap: wrap; height: auto; padding: 12px 16px; row-gap: 10px; }
+  .nav > div { flex-wrap: wrap; row-gap: 8px; }
+  .nav > div:last-child { justify-content: flex-end; width: 100%; }
+  .landing-split { flex-direction: column; min-height: auto !important; }
+}
 </style>
 </head>
 <body>
@@ -105,7 +117,7 @@ canvas.brain:active { cursor: grabbing; }
   <div class="mockup-label">Landing Page — first thing visitors see</div>
   <div class="mockup-sub">Two paths: Nonprofit & Research (dark) vs Ballare Studio (light)</div>
   <div class="mockup">
-    <div style="display:flex;min-height:100vh;">
+    <div class="landing-split" style="display:flex;min-height:100vh;">
       <!-- LEFT DARK -->
       <div style="flex:1;background:#1B2A4A;padding:52px 40px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;">
         <div style="position:relative;z-index:1;background:rgba(102,152,204,0.14);border:1px solid rgba(102,152,204,0.35);border-radius:16px;padding:28px 24px;height:320px;width:400px;max-width:100%;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;">
