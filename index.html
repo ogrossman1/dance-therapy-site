@@ -563,16 +563,18 @@ html, body { overflow-x: hidden; max-width: 100%; }
           <div class="eyebrow" style="color:#6698CC;">Routine feedback</div>
           <div class="section-heading" style="color:#1B2A4A;margin-bottom:8px;">Help us improve</div>
           <div class="body-text" style="color:#555;margin-bottom:18px;">Tell us about your experience with a specific routine — what worked, what didn't, and what you'd like to see more of.</div>
-          <input class="form-field" style="background:#fff;color:#999;border:1px solid #ddd;" placeholder="Which routine are you giving feedback on?"/>
+          <input id="feedback-routine-name" class="form-field" style="background:#fff;color:#333;border:1px solid #ddd;" placeholder="Which routine are you giving feedback on?"/>
           <div style="font-size:11px;color:#555;margin-bottom:8px;">Was this routine helpful?</div>
-          <div style="margin-bottom:10px;">
-            <span class="radio-opt" style="background:#e8f0fb;color:#6698CC;border-color:#6698CC;">Very helpful</span>
-            <span class="radio-opt" style="background:transparent;color:#888;border-color:#ddd;">Somewhat helpful</span>
-            <span class="radio-opt" style="background:transparent;color:#888;border-color:#ddd;">Not helpful</span>
+          <div id="feedback-rating-group" style="margin-bottom:10px;">
+            <span class="radio-opt" data-rating="Very helpful" style="background:#e8f0fb;color:#6698CC;border-color:#6698CC;" onclick="selectFeedbackRating(this)">Very helpful</span>
+            <span class="radio-opt" data-rating="Somewhat helpful" style="background:transparent;color:#888;border-color:#ddd;" onclick="selectFeedbackRating(this)">Somewhat helpful</span>
+            <span class="radio-opt" data-rating="Not helpful" style="background:transparent;color:#888;border-color:#ddd;" onclick="selectFeedbackRating(this)">Not helpful</span>
           </div>
-          <textarea class="form-field" style="background:#fff;color:#999;border:1px solid #ddd;min-height:52px;resize:none;" placeholder="What would you change or improve?"></textarea>
-          <input class="form-field" style="background:#fff;color:#999;border:1px solid #ddd;" placeholder="What types of routines would you like to see more of?"/>
-          <button class="form-btn" style="background:#1B2A4A;color:#fff;">Submit feedback</button>
+          <textarea id="feedback-improve" class="form-field" style="background:#fff;color:#333;border:1px solid #ddd;min-height:52px;resize:none;" placeholder="What would you change or improve?"></textarea>
+          <input id="feedback-more-types" class="form-field" style="background:#fff;color:#333;border:1px solid #ddd;" placeholder="What types of routines would you like to see more of?"/>
+          <div id="feedback-error" style="display:none;font-size:13px;color:#c0392b;margin-bottom:10px;line-height:1.5;"></div>
+          <div id="feedback-success" style="display:none;font-size:13px;color:#2e8b57;margin-bottom:10px;line-height:1.5;">Thanks — your feedback helps us improve.</div>
+          <button id="feedback-send-btn" class="form-btn" style="background:#1B2A4A;color:#fff;" onclick="submitRoutineFeedback()">Submit feedback</button>
           <div style="font-size:10px;color:#999;text-align:center;margin-top:8px;">Sent to inquiries@ballarefoundation.org</div>
         </div>
 
@@ -1236,27 +1238,12 @@ html, body { overflow-x: hidden; max-width: 100%; }
     <div class="eyebrow" style="color:#6698CC;">Get in touch</div>
     <div class="section-heading" style="color:#1B2A4A;margin-bottom:8px;">Contact us</div>
     <div class="body-text" style="color:#555;margin-bottom:16px;">Questions, feedback, or press inquiries — we'd love to hear from you.</div>
-    <input class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Your name"/>
-    <input class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Email address"/>
-    <textarea class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;min-height:70px;resize:none;" placeholder="Message"></textarea>
-    <button class="form-btn" style="background:#6698CC;color:#fff;">Send message</button>
-    <div style="font-size:10px;color:#999;text-align:center;margin-top:8px;">Sent to inquiries@ballarefoundation.org</div>
-    <div style="text-align:center;margin-top:10px;">
-      <button class="skip-link" onclick="hideContactModal()">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- SHARED MODAL: Contact, used across Foundation and Studio pages -->
-<div id="contact-modal-overlay" class="modal-overlay">
-  <div class="modal-card">
-    <div class="eyebrow" style="color:#6698CC;">Get in touch</div>
-    <div class="section-heading" style="color:#1B2A4A;margin-bottom:8px;">Contact us</div>
-    <div class="body-text" style="color:#555;margin-bottom:16px;">Questions, feedback, or press inquiries — we'd love to hear from you.</div>
-    <input class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Your name"/>
-    <input class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Email address"/>
-    <textarea class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;min-height:70px;resize:none;" placeholder="Message"></textarea>
-    <button class="form-btn" style="background:#6698CC;color:#fff;">Send message</button>
+    <input id="contact-name" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Your name"/>
+    <input id="contact-email" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Email address"/>
+    <textarea id="contact-message" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;min-height:70px;resize:none;" placeholder="Message"></textarea>
+    <div id="contact-error" style="display:none;font-size:13px;color:#c0392b;margin-bottom:10px;line-height:1.5;"></div>
+    <div id="contact-success" style="display:none;font-size:13px;color:#2e8b57;margin-bottom:10px;line-height:1.5;">Thanks for reaching out — we'll get back to you soon.</div>
+    <button id="contact-send-btn" class="form-btn" style="background:#6698CC;color:#fff;" onclick="sendContactMessage()">Send message</button>
     <div style="font-size:10px;color:#999;text-align:center;margin-top:8px;">Sent to inquiries@ballarefoundation.org</div>
     <div style="text-align:center;margin-top:10px;">
       <button class="skip-link" onclick="hideContactModal()">Cancel</button>
@@ -1524,6 +1511,105 @@ function showContactModal(){
 function hideContactModal(){
   var el = document.getElementById('contact-modal-overlay');
   if(el) el.style.display='none';
+}
+
+async function sendContactMessage(){
+  var errorEl = document.getElementById('contact-error');
+  var successEl = document.getElementById('contact-success');
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  var name = document.getElementById('contact-name').value.trim();
+  var email = document.getElementById('contact-email').value.trim();
+  var message = document.getElementById('contact-message').value.trim();
+
+  if(!name || !email || !message){
+    errorEl.textContent = 'Please fill in your name, email, and message.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  var btn = document.getElementById('contact-send-btn');
+  setButtonLoading(btn, 'Sending…');
+  try {
+    if(!supabaseClient) throw new Error("Couldn't connect to the database.");
+    const { data, error } = await supabaseClient.functions.invoke('send-contact-email', {
+      body: { formType: 'contact', name: name, email: email, message: message }
+    });
+    if(error) throw error;
+    if(data && data.error) throw new Error(typeof data.error === 'string' ? data.error : 'Something went wrong sending your message.');
+
+    successEl.style.display = 'block';
+    document.getElementById('contact-name').value = '';
+    document.getElementById('contact-email').value = '';
+    document.getElementById('contact-message').value = '';
+  } catch(err){
+    errorEl.textContent = err.message || "Something went wrong — your message didn't send. Please try again.";
+    errorEl.style.display = 'block';
+  } finally {
+    clearButtonLoading(btn);
+  }
+}
+
+// ─── ROUTINE FEEDBACK FORM ────────────────────────────────────
+var selectedFeedbackRating = 'Very helpful';
+function selectFeedbackRating(el){
+  var group = document.getElementById('feedback-rating-group');
+  if(!group) return;
+  var opts = group.querySelectorAll('.radio-opt');
+  opts.forEach(function(opt){
+    opt.style.background = 'transparent';
+    opt.style.color = '#888';
+    opt.style.borderColor = '#ddd';
+  });
+  el.style.background = '#e8f0fb';
+  el.style.color = '#6698CC';
+  el.style.borderColor = '#6698CC';
+  selectedFeedbackRating = el.getAttribute('data-rating');
+}
+
+async function submitRoutineFeedback(){
+  var errorEl = document.getElementById('feedback-error');
+  var successEl = document.getElementById('feedback-success');
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  var routineName = document.getElementById('feedback-routine-name').value.trim();
+  var improve = document.getElementById('feedback-improve').value.trim();
+  var moreTypes = document.getElementById('feedback-more-types').value.trim();
+
+  if(!routineName){
+    errorEl.textContent = 'Please let us know which routine this feedback is about.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  var btn = document.getElementById('feedback-send-btn');
+  setButtonLoading(btn, 'Sending…');
+  try {
+    if(!supabaseClient) throw new Error("Couldn't connect to the database.");
+    const { data, error } = await supabaseClient.functions.invoke('send-contact-email', {
+      body: {
+        formType: 'feedback',
+        routineName: routineName,
+        rating: selectedFeedbackRating,
+        improve: improve,
+        moreTypes: moreTypes
+      }
+    });
+    if(error) throw error;
+    if(data && data.error) throw new Error(typeof data.error === 'string' ? data.error : 'Something went wrong sending your feedback.');
+
+    successEl.style.display = 'block';
+    document.getElementById('feedback-routine-name').value = '';
+    document.getElementById('feedback-improve').value = '';
+    document.getElementById('feedback-more-types').value = '';
+  } catch(err){
+    errorEl.textContent = err.message || "Something went wrong — your feedback didn't send. Please try again.";
+    errorEl.style.display = 'block';
+  } finally {
+    clearButtonLoading(btn);
+  }
 }
 
 // ─── SHARED AUTH MODAL (Sign Up / Log In) ───────────────────
@@ -1799,6 +1885,10 @@ async function checkForConsentLinkOnLoad(){
     }
   } catch(err){
     console.error('Could not load consent request from link:', err);
+    var banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#c0392b;color:#fff;padding:14px 20px;font-size:14px;text-align:center;font-family:-apple-system,sans-serif;';
+    banner.textContent = 'Could not load this consent request: ' + (err.message || 'unknown error') + '. Please try again or check with us if this keeps happening.';
+    document.body.appendChild(banner);
   }
 }
 document.addEventListener('DOMContentLoaded', checkForConsentLinkOnLoad);
