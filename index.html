@@ -1865,7 +1865,20 @@ async function checkForConsentLinkOnLoad(){
     const { data, error } = await supabaseClient.functions.invoke('approve-consent', {
       body: { token: token, action: 'preview' }
     });
-    if(error) throw error;
+    if(error){
+      // supabase-js only gives a generic "non-2xx status code" message by
+      // default — the actual reason the function returned is in the
+      // response body itself, which we have to read separately.
+      if(error.context && typeof error.context.json === 'function'){
+        try {
+          var errBody = await error.context.json();
+          throw new Error(errBody.error || error.message);
+        } catch(parseErr){
+          throw error;
+        }
+      }
+      throw error;
+    }
     if(data && data.error) throw new Error(data.error);
 
     var nameEl = document.getElementById('parent-view-child-name');
