@@ -1859,25 +1859,24 @@ async function checkForConsentLinkOnLoad(){
 
   activeConsentToken = token;
   try {
-    // Look this request up via the Edge Function (preview mode) rather
-    // than a direct table SELECT — anon has no SELECT on pending_consents
-    // by design, so reads must go through the service-role function.
-    const { data, error } = await supabaseClient.functions.invoke('approve-consent', {
-      body: { token: token, action: 'preview' }
+    // Calling this directly with fetch (instead of supabase-js's
+    // functions.invoke wrapper) because that wrapper's error object
+    // doesn't reliably expose the actual response body from a failed
+    // call — this way we're guaranteed to see the real error message.
+    const resp = await fetch(SUPABASE_URL + '/functions/v1/approve-consent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({ token: token, action: 'preview' })
     });
-    if(error){
-      // supabase-js only gives a generic "non-2xx status code" message by
-      // default — the actual reason the function returned is in the
-      // response body itself, which we have to read separately.
-      if(error.context && typeof error.context.json === 'function'){
-        try {
-          var errBody = await error.context.json();
-          throw new Error(errBody.error || error.message);
-        } catch(parseErr){
-          throw error;
-        }
-      }
-      throw error;
+    var data = {};
+    try { data = await resp.json(); } catch(parseErr){ /* leave data as {} */ }
+
+    if(!resp.ok){
+      throw new Error(data.error || ('Request failed with status ' + resp.status));
     }
     if(data && data.error) throw new Error(data.error);
 
