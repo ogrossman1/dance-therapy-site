@@ -1281,6 +1281,16 @@ html, body { overflow-x: hidden; max-width: 100%; }
       </div>
     </div>
 
+    <!-- Shown when someone lands on the site via a "set your password" email link -->
+    <div id="auth-form-set-password" style="display:none;">
+      <div class="section-heading" style="color:#1B2A4A;margin-bottom:8px;">Set your password</div>
+      <div class="body-text" style="color:#555;margin-bottom:16px;">Your email is confirmed — choose a password to finish setting up your account.</div>
+      <input id="set-password-1" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" type="password" placeholder="New password"/>
+      <input id="set-password-2" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" type="password" placeholder="Confirm password"/>
+      <div id="set-password-error" style="display:none;font-size:13px;color:#c0392b;margin-bottom:10px;line-height:1.5;"></div>
+      <button id="set-password-btn" class="form-btn" style="background:#6698CC;color:#fff;" onclick="submitNewPassword()">Set password &amp; continue</button>
+    </div>
+
     <!-- Shown instead of the signup form when the entered birth date is under 13 -->
     <div id="auth-form-parent-consent" style="display:none;">
       <div class="section-heading" style="color:#1B2A4A;margin-bottom:8px;">A parent or guardian needs to consent</div>
@@ -1628,7 +1638,7 @@ function hideAuthModal(){
   if(el) el.style.display='none';
 }
 // All the possible panels inside the auth modal — only one is shown at a time
-var authPanelIds = ['auth-form-signup','auth-form-parent-consent','auth-form-consent-sent','auth-form-verify-sent','auth-form-parent-view','auth-form-login'];
+var authPanelIds = ['auth-form-signup','auth-form-parent-consent','auth-form-consent-sent','auth-form-verify-sent','auth-form-set-password','auth-form-parent-view','auth-form-login'];
 function showAuthPanel(id){
   authPanelIds.forEach(function(pid){
     var el = document.getElementById(pid);
@@ -1904,6 +1914,55 @@ async function checkForConsentLinkOnLoad(){
   }
 }
 document.addEventListener('DOMContentLoaded', checkForConsentLinkOnLoad);
+
+// ─── SET PASSWORD (from "confirm your email" / "parent approved" links) ──
+// When someone clicks a recovery-type link from one of our emails, the
+// Supabase client automatically detects the token in the URL and fires
+// this event — that's our cue to show the "set your password" form.
+if(supabaseClient){
+  supabaseClient.auth.onAuthStateChange(function(event, session){
+    if(event === 'PASSWORD_RECOVERY'){
+      showAuthModal();
+      showAuthPanel('auth-form-set-password');
+    }
+  });
+}
+
+async function submitNewPassword(){
+  var errorEl = document.getElementById('set-password-error');
+  errorEl.style.display = 'none';
+
+  var pw1 = document.getElementById('set-password-1').value;
+  var pw2 = document.getElementById('set-password-2').value;
+
+  if(!pw1 || pw1.length < 6){
+    errorEl.textContent = 'Please choose a password that\'s at least 6 characters.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if(pw1 !== pw2){
+    errorEl.textContent = "Those passwords don't match. Please try again.";
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  var btn = document.getElementById('set-password-btn');
+  setButtonLoading(btn, 'Saving…');
+  try {
+    if(!supabaseClient) throw new Error("Couldn't connect to the database.");
+    const { error } = await supabaseClient.auth.updateUser({ password: pw1 });
+    if(error) throw error;
+
+    // Clean the recovery token out of the URL now that it's been used.
+    window.history.replaceState({}, document.title, window.location.pathname);
+    handleAuthSuccess();
+  } catch(err){
+    errorEl.textContent = err.message || 'Something went wrong setting your password. Please try again.';
+    errorEl.style.display = 'block';
+  } finally {
+    clearButtonLoading(btn);
+  }
+}
 
 
 // ─── LOGIN ─────────────────────────────────────────────────────
