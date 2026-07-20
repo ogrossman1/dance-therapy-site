@@ -399,7 +399,9 @@ html, body { overflow-x: hidden; max-width: 100%; }
       <div style="display:flex;gap:14px;align-items:center;">
         <span style="font-size:11px;color:#6698CC;background:#eaf1fb;padding:5px 12px;border-radius:14px;cursor:pointer;" onclick="gotoPage('foundation')">Nonprofit & Research</span>
         <span style="font-size:20px;color:#1B2A4A;cursor:pointer;" onclick="showNavDrawer()">☰</span>
-        <button style="font-size:11px;padding:6px 16px;border-radius:20px;border:none;font-weight:500;background:#6698CC;color:#fff;" onclick="showAuthModal('login')">Log in</button>
+        <span id="studio-nav-account-area">
+          <button style="font-size:11px;padding:6px 16px;border-radius:20px;border:none;font-weight:500;background:#6698CC;color:#fff;" onclick="showAuthModal('login')">Log in</button>
+        </span>
       </div>
     </div>
 
@@ -416,7 +418,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
           <div class="eyebrow" style="color:#6698CC;">Dance therapy routines</div>
           <div class="hero-title" style="color:#1B2A4A;">Move at your<br>own pace.</div>
           <div class="body-text" style="color:#555;max-width:440px;margin-bottom:24px;">Free, clinician-approved dance therapy routines — designed for hospital patients, people with limited access to healthcare, and anyone looking to move more safely and feel better. Every age, every ability, every position.</div>
-          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <div id="studio-hero-account-area" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
             <button class="btn" style="background:#6698CC;color:#fff;" onclick="showAuthModal('signup')">Sign up free</button>
             <button class="btn-outline" style="color:#1B2A4A;border:1px solid #ddd;" onclick="showAuthModal('login')">Log in</button>
             <span style="font-size:11px;color:#6698CC;background:#e8f0fb;padding:6px 14px;border-radius:14px;font-weight:600;">App — Coming Soon</span>
@@ -654,18 +656,95 @@ html, body { overflow-x: hidden; max-width: 100%; }
         <div style="padding:20px 20px 14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:flex-start;">
           <div>
             <div style="font-size:13px;font-weight:700;color:#1B2A4A;">Ballare Studio</div>
-            <div style="font-size:10px;color:#888;margin-top:2px;">Not signed in</div>
           </div>
           <span style="cursor:pointer;color:#999;font-size:14px;" onclick="hideNavDrawer()">✕</span>
         </div>
         <div style="padding:8px 0;">
+          <div id="nav-drawer-status" style="padding:12px 20px;font-size:12px;color:#333;cursor:default;" onclick="">Not signed in</div>
+          <div style="height:1px;background:#eee;margin:4px 0;"></div>
           <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;" onclick="gotoPage('studio')">Home</div>
           <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;" onclick="hideNavDrawer();scrollToSection('sample-routine-section');">Routines</div>
-          <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;">Order Free Kit <span style="color:#aaa;font-size:9px;">— Coming Soon</span></div>
+          <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;" onclick="hideNavDrawer();gateKitOrder();">Order Free Kit</div>
           <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;" onclick="hideNavDrawer();showDonateModal();">Donate</div>
           <div style="padding:12px 20px;font-size:12px;color:#333;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">Follow-Up <span style="background:#eee;color:#999;border-radius:10px;padding:1px 7px;font-size:9px;font-weight:600;">Coming Soon</span></div>
           <div style="height:1px;background:#eee;margin:4px 0;"></div>
-          <div style="padding:12px 20px;font-size:12px;color:#6698CC;cursor:pointer;" onclick="hideNavDrawer();showAuthModal('signup');">Sign up / Log in</div>
+          <div id="nav-drawer-auth-link" style="padding:12px 20px;font-size:12px;color:#6698CC;cursor:pointer;" onclick="hideNavDrawer();showAuthModal('signup');">Sign up / Log in</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: My Account — shown when a signed-in user clicks their name in the drawer -->
+    <div id="account-modal-overlay" class="modal-overlay">
+      <div class="modal-card">
+        <div class="eyebrow" style="color:#6698CC;">My Account</div>
+        <div class="section-heading" style="color:#1B2A4A;margin-bottom:4px;" id="account-modal-name">Your account</div>
+        <div style="font-size:12px;color:#888;margin-bottom:20px;" id="account-modal-age"></div>
+
+        <div style="font-size:13px;font-weight:600;color:#1B2A4A;margin-bottom:10px;">Which of these apply to you? <span style="font-weight:400;color:#999;">(optional)</span></div>
+        <div style="font-size:11px;color:#777;margin-bottom:12px;line-height:1.5;">This helps us point you toward routines that fit your needs — it's never shared and you can change it anytime.</div>
+        <div id="account-conditions-group" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+          <span class="radio-opt" data-condition="Limited mobility" onclick="toggleCondition(this)" style="background:transparent;color:#888;border-color:#ddd;">Limited mobility</span>
+          <span class="radio-opt" data-condition="Chronic pain" onclick="toggleCondition(this)" style="background:transparent;color:#888;border-color:#ddd;">Chronic pain</span>
+          <span class="radio-opt" data-condition="Balance issues" onclick="toggleCondition(this)" style="background:transparent;color:#888;border-color:#ddd;">Balance issues</span>
+          <span class="radio-opt" data-condition="Recovering from surgery" onclick="toggleCondition(this)" style="background:transparent;color:#888;border-color:#ddd;">Recovering from surgery</span>
+          <span class="radio-opt" data-condition="Cognitive support needs" onclick="toggleCondition(this)" style="background:transparent;color:#888;border-color:#ddd;">Cognitive support needs</span>
+          <span class="radio-opt" data-condition="Using a wheelchair" onclick="toggleCondition(this)" style="background:transparent;color:#888;border-color:#ddd;">Using a wheelchair</span>
+          <span class="radio-opt" data-condition="Prefer not to say" onclick="toggleCondition(this)" style="background:transparent;color:#888;border-color:#ddd;">Prefer not to say</span>
+        </div>
+        <div id="account-save-error" style="display:none;font-size:13px;color:#c0392b;margin-bottom:10px;line-height:1.5;"></div>
+        <div id="account-save-success" style="display:none;font-size:13px;color:#2e8b57;margin-bottom:10px;line-height:1.5;">Saved.</div>
+        <button id="account-save-btn" class="form-btn" style="background:#6698CC;color:#fff;" onclick="saveAccountConditions()">Save</button>
+        <div style="text-align:center;margin-top:10px;">
+          <button class="skip-link" onclick="hideAccountModal()">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Free Kit — shows the order form if in stock, or the
+         waitlist form if sold out. Which one appears is decided live,
+         by checking real inventory, right when this opens. -->
+    <div id="kit-waitlist-modal-overlay" class="modal-overlay">
+      <div class="modal-card">
+        <div class="eyebrow" style="color:#6698CC;">Free Exercise Kit</div>
+
+        <div id="kit-loading" style="text-align:center;color:#888;font-size:13px;padding:20px 0;">Checking availability…</div>
+
+        <!-- Shown when kits are in stock -->
+        <div id="kit-order-form" style="display:none;">
+          <div class="section-heading" style="color:#1B2A4A;margin-bottom:8px;">Order your free kit</div>
+          <div class="body-text" style="color:#555;margin-bottom:14px;" id="kit-stock-note"></div>
+          <input id="kit-order-name" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Full name"/>
+          <input id="kit-order-email" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Email address"/>
+          <input id="kit-order-address1" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Street address"/>
+          <input id="kit-order-address2" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Apt / unit (optional)"/>
+          <input id="kit-order-city" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="City"/>
+          <div style="display:flex;gap:8px;">
+            <input id="kit-order-state" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;flex:1;" placeholder="State"/>
+            <input id="kit-order-zip" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;flex:1;" placeholder="ZIP code"/>
+          </div>
+          <div id="kit-order-error" style="display:none;font-size:13px;color:#c0392b;margin-bottom:10px;line-height:1.5;"></div>
+          <button id="kit-order-btn" class="form-btn" style="background:#6698CC;color:#fff;" onclick="placeKitOrder()">Place order</button>
+        </div>
+
+        <!-- Shown when sold out -->
+        <div id="kit-waitlist-form" style="display:none;">
+          <div class="section-heading" style="color:#1B2A4A;margin-bottom:8px;">Kits are on the way</div>
+          <div class="body-text" style="color:#555;margin-bottom:16px;">We're all out right now! Leave your email and we'll let you know the moment more kits are available.</div>
+          <input id="kit-waitlist-email" class="form-field" style="background:#f7f9fc;color:#333;border:1px solid #ddd;" placeholder="Email address"/>
+          <div id="kit-waitlist-error" style="display:none;font-size:13px;color:#c0392b;margin-bottom:10px;line-height:1.5;"></div>
+          <button id="kit-waitlist-btn" class="form-btn" style="background:#6698CC;color:#fff;" onclick="joinKitWaitlist()">Notify me</button>
+        </div>
+
+        <!-- Shown after either succeeds -->
+        <div id="kit-success" style="display:none;text-align:center;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#e8f0fb;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6698CC" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg>
+          </div>
+          <div class="body-text" style="color:#555;" id="kit-success-text"></div>
+        </div>
+
+        <div style="text-align:center;margin-top:10px;">
+          <button class="skip-link" onclick="hideKitWaitlistModal()">Close</button>
         </div>
       </div>
     </div>
@@ -1321,7 +1400,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
     <div id="auth-form-parent-view" style="display:none;">
       <div class="section-heading" style="color:#1B2A4A;margin-bottom:8px;">Parent/guardian consent request</div>
       <div class="body-text" style="color:#555;margin-bottom:12px;"><strong id="parent-view-child-name">Your child</strong> would like to create a Ballare Studio account to access free dance therapy routines. Before we collect any information, we need your consent as their parent or guardian.</div>
-      <div class="body-text" style="color:#555;margin-bottom:16px;">We'll collect their name, age bracket, and routine progress, and — only if you or they choose to participate — anonymized survey responses for our dance therapy research. You can review, correct, or delete this information at any time.</div>
+      <div class="body-text" style="color:#555;margin-bottom:16px;">We'll collect their name, age bracket, and routine progress, and — only if you or they choose to participate — anonymized survey responses for our dance therapy research. You can request we review, correct, or delete this information at any time by <span style="color:#6698CC;text-decoration:underline;cursor:pointer;" onclick="showContactModal()">contacting us</span>.</div>
       <div id="parent-consent-error" style="display:none;font-size:14px;color:#c0392b;margin-bottom:12px;line-height:1.5;"></div>
       <div id="parent-consent-success" style="display:none;font-size:14px;color:#2e8b57;margin-bottom:12px;line-height:1.5;"></div>
       <button id="approve-consent-btn" class="form-btn" style="background:#6698CC;color:#fff;" onclick="approveConsent()">I consent — create the account</button>
@@ -1434,6 +1513,17 @@ function hideAuthGate(){
 }
 function gateWorksheet(){
   pendingGatedAction = 'worksheet';
+  showAuthGate();
+}
+async function gateKitOrder(){
+  if(supabaseClient){
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if(session && session.user){
+      showKitModal();
+      return;
+    }
+  }
+  pendingGatedAction = 'kit';
   showAuthGate();
 }
 
@@ -1667,9 +1757,13 @@ var pendingChildSignup = null;
 
 async function handleAuthSuccess(){
   hideAuthModal();
+  updateAuthUI();
   if(pendingGatedAction === 'routine'){
     pendingGatedAction = null;
     continueStartRoutine();
+  } else if(pendingGatedAction === 'kit'){
+    pendingGatedAction = null;
+    showKitModal();
   } else {
     pendingGatedAction = null;
   }
@@ -1856,7 +1950,7 @@ async function approveConsent(){
 
     var successEl = document.getElementById('parent-consent-success');
     if(successEl){
-      successEl.textContent = "Approved! We've emailed your child a link to set their password and get started.";
+      successEl.textContent = "Approved! We've emailed your child a link to set their password and get started. If it doesn't show up in their inbox soon, have them check their spam or junk folder.";
       successEl.style.display = 'block';
     }
     document.getElementById('approve-consent-btn').style.display = 'none';
@@ -1937,7 +2031,313 @@ if(supabaseClient){
       showAuthModal();
       showAuthPanel('auth-form-set-password');
     }
+    if(event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'INITIAL_SESSION'){
+      updateAuthUI();
+    }
   });
+}
+document.addEventListener('DOMContentLoaded', updateAuthUI);
+
+function getAgeCategory(dob){
+  if(!dob) return '';
+  var birthDate = new Date(dob);
+  var today = new Date();
+  var age = today.getFullYear() - birthDate.getFullYear();
+  var hasHadBirthdayThisYear = (today.getMonth() > birthDate.getMonth()) ||
+    (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+  if(!hasHadBirthdayThisYear) age--;
+  if(age < 13) return 'Under 13';
+  if(age < 18) return '13–17';
+  return '18+';
+}
+
+async function updateAuthUI(){
+  var navArea = document.getElementById('studio-nav-account-area');
+  var heroArea = document.getElementById('studio-hero-account-area');
+  var drawerStatus = document.getElementById('nav-drawer-status');
+  var drawerAuthLink = document.getElementById('nav-drawer-auth-link');
+  if(!navArea || !supabaseClient) return; // only relevant on the Studio page
+
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if(session && session.user){
+      var meta = session.user.user_metadata || {};
+      var fullName = meta.full_name || session.user.email || 'there';
+      var firstName = fullName.split(' ')[0];
+      var ageCategory = getAgeCategory(meta.date_of_birth);
+
+      navArea.innerHTML = '<span style="font-size:11px;color:#1B2A4A;font-weight:600;margin-right:10px;">Welcome, ' + firstName + '</span>' +
+        '<button style="font-size:11px;padding:6px 16px;border-radius:20px;border:1px solid #ddd;font-weight:500;background:transparent;color:#1B2A4A;" onclick="logOut()">Log out</button>';
+
+      if(heroArea){
+        heroArea.innerHTML = '<span style="font-size:15px;color:#1B2A4A;font-weight:600;">Welcome back, ' + firstName + '!</span>';
+      }
+      if(drawerStatus){
+        drawerStatus.innerHTML = '👤 My Account — <span style="color:#6698CC;font-weight:600;">' + firstName + '</span>';
+        drawerStatus.style.cursor = 'pointer';
+        drawerStatus.onclick = function(){ hideNavDrawer(); showAccountModal(); };
+      }
+      if(drawerAuthLink){
+        drawerAuthLink.textContent = 'Log out';
+        drawerAuthLink.onclick = function(){ hideNavDrawer(); logOut(); };
+      }
+    } else {
+      navArea.innerHTML = '<button style="font-size:11px;padding:6px 16px;border-radius:20px;border:none;font-weight:500;background:#6698CC;color:#fff;" onclick="showAuthModal(\'login\')">Log in</button>';
+      if(heroArea){
+        heroArea.innerHTML = '<button class="btn" style="background:#6698CC;color:#fff;" onclick="showAuthModal(\'signup\')">Sign up free</button>' +
+          '<button class="btn-outline" style="color:#1B2A4A;border:1px solid #ddd;" onclick="showAuthModal(\'login\')">Log in</button>' +
+          '<span style="font-size:11px;color:#6698CC;background:#e8f0fb;padding:6px 14px;border-radius:14px;font-weight:600;">App — Coming Soon</span>';
+      }
+      if(drawerStatus){
+        drawerStatus.textContent = 'Not signed in';
+        drawerStatus.style.cursor = 'default';
+        drawerStatus.onclick = null;
+      }
+      if(drawerAuthLink){
+        drawerAuthLink.textContent = 'Sign up / Log in';
+        drawerAuthLink.onclick = function(){ hideNavDrawer(); showAuthModal('signup'); };
+      }
+    }
+  } catch(err){
+    console.error('Could not check sign-in status:', err);
+  }
+}
+
+async function logOut(){
+  if(!supabaseClient) return;
+  await supabaseClient.auth.signOut();
+  updateAuthUI();
+}
+
+// ─── MY ACCOUNT MODAL ──────────────────────────────────────────
+var selectedConditions = [];
+
+async function showAccountModal(){
+  var overlay = document.getElementById('account-modal-overlay');
+  if(!overlay || !supabaseClient) return;
+
+  document.getElementById('account-save-error').style.display = 'none';
+  document.getElementById('account-save-success').style.display = 'none';
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(!session || !session.user){ hideAccountModal(); return; }
+
+  var meta = session.user.user_metadata || {};
+  var fullName = meta.full_name || session.user.email || 'there';
+  document.getElementById('account-modal-name').textContent = fullName;
+  document.getElementById('account-modal-age').textContent = getAgeCategory(meta.date_of_birth) || '';
+
+  // Reset all condition chips to unselected, then re-check any saved ones
+  selectedConditions = [];
+  var group = document.getElementById('account-conditions-group');
+  group.querySelectorAll('.radio-opt').forEach(function(opt){
+    opt.style.background = 'transparent';
+    opt.style.color = '#888';
+    opt.style.borderColor = '#ddd';
+  });
+
+  try {
+    const { data: profile } = await supabaseClient
+      .from('profiles').select('conditions').eq('id', session.user.id).single();
+    if(profile && Array.isArray(profile.conditions)){
+      selectedConditions = profile.conditions.slice();
+      group.querySelectorAll('.radio-opt').forEach(function(opt){
+        if(selectedConditions.indexOf(opt.getAttribute('data-condition')) !== -1){
+          opt.style.background = '#e8f0fb';
+          opt.style.color = '#6698CC';
+          opt.style.borderColor = '#6698CC';
+        }
+      });
+    }
+  } catch(err){
+    // No saved conditions yet, or the column doesn't exist — that's fine,
+    // the form just starts blank.
+    console.error('Could not load saved conditions:', err);
+  }
+
+  overlay.style.display = 'flex';
+}
+
+function hideAccountModal(){
+  var overlay = document.getElementById('account-modal-overlay');
+  if(overlay) overlay.style.display = 'none';
+}
+
+function toggleCondition(el){
+  var condition = el.getAttribute('data-condition');
+  var idx = selectedConditions.indexOf(condition);
+  if(idx === -1){
+    selectedConditions.push(condition);
+    el.style.background = '#e8f0fb';
+    el.style.color = '#6698CC';
+    el.style.borderColor = '#6698CC';
+  } else {
+    selectedConditions.splice(idx, 1);
+    el.style.background = 'transparent';
+    el.style.color = '#888';
+    el.style.borderColor = '#ddd';
+  }
+}
+
+async function saveAccountConditions(){
+  var errorEl = document.getElementById('account-save-error');
+  var successEl = document.getElementById('account-save-success');
+  errorEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  var btn = document.getElementById('account-save-btn');
+  setButtonLoading(btn, 'Saving…');
+  try {
+    if(!supabaseClient) throw new Error("Couldn't connect to the database.");
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if(!session || !session.user) throw new Error('You need to be signed in to save this.');
+
+    const { error } = await supabaseClient
+      .from('profiles').update({ conditions: selectedConditions }).eq('id', session.user.id);
+    if(error) throw error;
+
+    successEl.style.display = 'block';
+  } catch(err){
+    errorEl.textContent = err.message || 'Something went wrong saving this — please try again.';
+    errorEl.style.display = 'block';
+  } finally {
+    clearButtonLoading(btn);
+  }
+}
+
+// ─── FREE KIT: ORDER (if in stock) or WAITLIST (if sold out) ──
+async function showKitModal(){
+  var overlay = document.getElementById('kit-waitlist-modal-overlay');
+  if(!overlay || !supabaseClient) return;
+
+  document.getElementById('kit-loading').style.display = 'block';
+  document.getElementById('kit-order-form').style.display = 'none';
+  document.getElementById('kit-waitlist-form').style.display = 'none';
+  document.getElementById('kit-success').style.display = 'none';
+  overlay.style.display = 'flex';
+
+  try {
+    const { data: inventory, error } = await supabaseClient
+      .from('kit_inventory').select('available_count').eq('id', 1).single();
+    if(error) throw error;
+
+    document.getElementById('kit-loading').style.display = 'none';
+
+    if(inventory && inventory.available_count > 0){
+      document.getElementById('kit-order-form').style.display = 'block';
+      document.getElementById('kit-stock-note').textContent = inventory.available_count + ' kit' + (inventory.available_count === 1 ? '' : 's') + ' left right now.';
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if(session && session.user){
+        document.getElementById('kit-order-email').value = session.user.email || '';
+        document.getElementById('kit-order-name').value = (session.user.user_metadata || {}).full_name || '';
+      }
+    } else {
+      document.getElementById('kit-waitlist-form').style.display = 'block';
+    }
+  } catch(err){
+    document.getElementById('kit-loading').textContent = 'Something went wrong checking availability — please try again.';
+    console.error('Could not check kit inventory:', err);
+  }
+}
+
+function hideKitWaitlistModal(){
+  var overlay = document.getElementById('kit-waitlist-modal-overlay');
+  if(overlay) overlay.style.display = 'none';
+}
+
+async function placeKitOrder(){
+  var errorEl = document.getElementById('kit-order-error');
+  errorEl.style.display = 'none';
+
+  var name = document.getElementById('kit-order-name').value.trim();
+  var email = document.getElementById('kit-order-email').value.trim();
+  var address1 = document.getElementById('kit-order-address1').value.trim();
+  var address2 = document.getElementById('kit-order-address2').value.trim();
+  var city = document.getElementById('kit-order-city').value.trim();
+  var state = document.getElementById('kit-order-state').value.trim();
+  var zip = document.getElementById('kit-order-zip').value.trim();
+
+  if(!name || !email || !address1 || !city || !state || !zip){
+    errorEl.textContent = 'Please fill in your name, email, and full address.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  var btn = document.getElementById('kit-order-btn');
+  setButtonLoading(btn, 'Placing order…');
+  try {
+    if(!supabaseClient) throw new Error("Couldn't connect to the database.");
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if(!session || !session.user) throw new Error('You need to be signed in to order a kit.');
+
+    const { data, error } = await supabaseClient.rpc('place_kit_order', {
+      p_user_id: session.user.id,
+      p_name: name,
+      p_email: email,
+      p_address_line1: address1,
+      p_address_line2: address2 || null,
+      p_city: city,
+      p_state: state,
+      p_zip: zip
+    });
+    if(error) throw error;
+
+    if(data && data.success === false && data.error === 'sold_out'){
+      // Someone else grabbed the last one between opening this form and
+      // submitting it — gracefully drop them into the waitlist instead.
+      document.getElementById('kit-order-form').style.display = 'none';
+      document.getElementById('kit-waitlist-form').style.display = 'block';
+      document.getElementById('kit-waitlist-email').value = email;
+      return;
+    }
+
+    // Fire the confirmation email — if this happens to fail, the order
+    // itself is still safely placed, so we don't block success on it.
+    try {
+      await supabaseClient.functions.invoke('send-order-confirmation', { body: { name: name, email: email } });
+    } catch(emailErr){
+      console.error('Order confirmation email failed to send:', emailErr);
+    }
+
+    document.getElementById('kit-order-form').style.display = 'none';
+    document.getElementById('kit-success-text').textContent = "You're all set — a confirmation email is on its way, and we'll email you again with tracking info once it ships.";
+    document.getElementById('kit-success').style.display = 'block';
+  } catch(err){
+    errorEl.textContent = err.message || 'Something went wrong placing your order — please try again.';
+    errorEl.style.display = 'block';
+  } finally {
+    clearButtonLoading(btn);
+  }
+}
+
+async function joinKitWaitlist(){
+  var errorEl = document.getElementById('kit-waitlist-error');
+  errorEl.style.display = 'none';
+
+  var email = document.getElementById('kit-waitlist-email').value.trim();
+  if(!email || email.indexOf('@') === -1){
+    errorEl.textContent = 'Please enter a valid email address.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  var btn = document.getElementById('kit-waitlist-btn');
+  setButtonLoading(btn, 'Saving…');
+  try {
+    if(!supabaseClient) throw new Error("Couldn't connect to the database.");
+    const { error } = await supabaseClient.from('kit_waitlist').insert({ email: email });
+    if(error) throw error;
+
+    document.getElementById('kit-waitlist-form').style.display = 'none';
+    document.getElementById('kit-success-text').textContent = "You're on the list — we'll email you the moment more kits are available.";
+    document.getElementById('kit-success').style.display = 'block';
+  } catch(err){
+    errorEl.textContent = err.message || 'Something went wrong — please try again.';
+    errorEl.style.display = 'block';
+  } finally {
+    clearButtonLoading(btn);
+  }
 }
 
 async function submitNewPassword(){
