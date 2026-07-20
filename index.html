@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="theme-navy">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,8 +30,6 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-html.theme-navy, html.theme-navy body { background: #1B2A4A; }
-html.theme-light, html.theme-light body { background: #fff; }
 input, textarea, button, select { font-family: inherit; }
 
 /* NAV TABS */
@@ -1444,16 +1442,22 @@ html, body { overflow-x: hidden; max-width: 100%; }
 </div>
 
 <script>
-// Which pages are dark navy vs light — controls the browser's own
-// address-bar tint and the pull-to-refresh/overscroll background, so
-// they match the page instead of showing a jarring flash of white.
-var navyPages = ['landing', 'foundation'];
+// Each page's actual top edge (nav bar) and bottom edge (footer bar)
+// color — used to tint the browser's own chrome and the pull/overscroll
+// area so they match rather than flashing white.
+var pageThemeColors = {
+  'landing':    { top: '#1B2A4A', bottom: '#ffffff' }, // navy Foundation half on top, white Studio half on bottom
+  'foundation': { top: '#1B2A4A', bottom: '#0d1a30' }, // navy nav, darker navy footer bar
+  'studio':     { top: '#ffffff', bottom: '#0d1a30' }, // white nav, darker navy footer bar
+  'app':        { top: '#ffffff', bottom: '#ffffff' },
+  'light':      { top: '#ffffff', bottom: '#ffffff' }  // legal sub-pages
+};
 function updatePageTheme(id){
-  var isNavy = navyPages.indexOf(id) !== -1;
-  document.documentElement.classList.toggle('theme-navy', isNavy);
-  document.documentElement.classList.toggle('theme-light', !isNavy);
+  var colors = pageThemeColors[id] || pageThemeColors['light'];
+  document.documentElement.style.background = colors.top;
+  document.body.style.background = colors.bottom;
   var meta = document.getElementById('theme-color-meta');
-  if(meta) meta.setAttribute('content', isNavy ? '#1B2A4A' : '#ffffff');
+  if(meta) meta.setAttribute('content', colors.top);
 }
 
 // Tab switching
@@ -2037,6 +2041,7 @@ async function checkForConsentLinkOnLoad(){
     document.body.appendChild(banner);
   }
 }
+document.addEventListener('DOMContentLoaded', function(){ updatePageTheme('landing'); });
 document.addEventListener('DOMContentLoaded', checkForConsentLinkOnLoad);
 
 // ─── SET PASSWORD (from "confirm your email" / "parent approved" links) ──
