@@ -192,7 +192,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
           <div class="body-text" style="color:#a0b4d0;max-width:480px;margin-bottom:24px;">The Ballare Foundation strives to make clinician-approved dance therapy accessible to anyone who could benefit from it — grounded in neuroscience research into how movement heals.</div>
           <div style="display:flex;gap:12px;">
             <button class="btn" style="background:#6698CC;color:#fff;" onclick="showLegalPage('legal-research')">Research</button>
-            <button class="btn-outline" style="color:#E36888;border:1px solid #E36888;" onclick="showDonateModal()">Donate</button>
+            <button class="btn-outline" style="color:#E36888;border:1px solid #E36888;" onclick="goToDonatePayment()">Donate</button>
           </div>
         </div>
 
@@ -365,9 +365,10 @@ html, body { overflow-x: hidden; max-width: 100%; }
 
         <!-- DONATE -->
         <div style="text-align:center;padding:36px;background:rgba(227,104,136,0.07);border-radius:16px;border:1px solid rgba(227,104,136,0.18);margin-bottom:24px;">
+          <img src="logo.png" alt="Ballare Foundation logo" style="width:56px;height:56px;border-radius:16px;object-fit:cover;margin-bottom:16px;box-shadow:0 4px 14px rgba(227,104,136,0.25);"/>
           <div style="font-size:20px;font-weight:500;color:#fff;margin-bottom:10px;">Support Our Mission</div>
           <div class="body-text" style="color:#a0b4d0;margin-bottom:20px;max-width:360px;margin-left:auto;margin-right:auto;">Ballare Studio is completely free for all patients. Your donation helps us reach more hospitals, create more routines, and advance dance therapy research.</div>
-          <button class="btn" style="background:#E36888;color:#fff;font-size:14px;padding:13px 32px;" onclick="showDonateModal()">Donate now</button>
+          <button class="btn" style="background:#E36888;color:#fff;font-size:14px;padding:13px 32px;" onclick="goToDonatePayment()">Donate now</button>
         </div>
 
         <!-- STAY IN THE LOOP -->
@@ -680,7 +681,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
           <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;" onclick="gotoPage('studio')">Home</div>
           <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;" onclick="hideNavDrawer();scrollToSection('sample-routine-section');">Routines</div>
           <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;" onclick="hideNavDrawer();gateKitOrder();">Order Free Kit</div>
-          <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;" onclick="hideNavDrawer();showDonateModal();">Donate</div>
+          <div style="padding:12px 20px;font-size:12px;color:#333;cursor:pointer;" onclick="hideNavDrawer();goToDonatePayment();">Donate</div>
           <div style="padding:12px 20px;font-size:12px;color:#333;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">Follow-Up <span style="background:#eee;color:#999;border-radius:10px;padding:1px 7px;font-size:9px;font-weight:600;">Coming Soon</span></div>
           <div style="height:1px;background:#eee;margin:4px 0;"></div>
           <div id="nav-drawer-auth-link" style="padding:12px 20px;font-size:12px;color:#6698CC;cursor:pointer;" onclick="hideNavDrawer();showAuthModal('signup');">Sign up / Log in</div>
@@ -1432,26 +1433,6 @@ html, body { overflow-x: hidden; max-width: 100%; }
       <button id="login-btn" class="form-btn" style="background:#6698CC;color:#fff;" onclick="doLogin()">Log in</button>
     </div>
     <button class="skip-link" id="auth-cancel-btn" onclick="hideAuthModal()">Cancel</button>
-  </div>
-</div>
-
-<!-- SHARED MODAL: Donate, used across Foundation and Studio pages -->
-<div id="donate-modal-overlay" class="modal-overlay">
-  <div class="modal-card" style="text-align:center;">
-    <div class="section-heading" style="color:#1B2A4A;margin-bottom:8px;">Support The Ballare Foundation</div>
-    <div class="body-text" style="color:#555;margin-bottom:16px;">In the real app, this connects to a payment processor. Choose an amount to preview the flow:</div>
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <button class="state-demo-btn donate-amt" onclick="selectDonateAmt(this)">$10</button>
-      <button class="state-demo-btn donate-amt active" onclick="selectDonateAmt(this)">$25</button>
-      <button class="state-demo-btn donate-amt" onclick="selectDonateAmt(this)">$50</button>
-      <button class="state-demo-btn donate-amt" onclick="selectDonateAmt(this)">$100</button>
-    </div>
-    <div style="position:relative;margin-bottom:18px;">
-      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#888;font-size:13px;">$</span>
-      <input id="donate-custom-amt" type="number" min="1" step="1" placeholder="Other amount" style="width:100%;padding:10px 12px 10px 24px;border-radius:8px;border:1px solid #ddd;font-size:13px;box-sizing:border-box;" oninput="selectDonateCustom()"/>
-    </div>
-    <button class="form-btn" style="background:#E36888;color:#fff;" onclick="hideDonateModal()">Continue to payment</button>
-    <button class="skip-link" onclick="hideDonateModal()">Cancel</button>
   </div>
 </div>
 
@@ -2456,23 +2437,10 @@ async function doLogin(){
   }
 }
 
-// ─── SHARED DONATE MODAL ─────────────────────────────────────
-function showDonateModal(){
-  var el = document.getElementById('donate-modal-overlay');
-  if(el) el.style.display='flex';
-}
-function hideDonateModal(){
-  var el = document.getElementById('donate-modal-overlay');
-  if(el) el.style.display='none';
-}
-function selectDonateAmt(btn){
-  document.querySelectorAll('.donate-amt').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
-  var customInput = document.getElementById('donate-custom-amt');
-  if(customInput) customInput.value = '';
-}
-function selectDonateCustom(){
-  document.querySelectorAll('.donate-amt').forEach(function(b){ b.classList.remove('active'); });
+// ─── DONATE — opens the real HCB donation page ────────────────
+var DONATE_URL = 'https://hcb.hackclub.com/donations/start/the-ballare-foundation';
+function goToDonatePayment(){
+  window.open(DONATE_URL, '_blank', 'noopener');
 }
 
 // ─── SCROLL TO SECTION HELPER ────────────────────────────────
