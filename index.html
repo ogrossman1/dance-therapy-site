@@ -2364,11 +2364,23 @@ function toggleChatWidget(){
   }
 }
 
+function escapeHtml(str){
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function formatBotText(text){
+  // Escape any raw HTML first (safety), THEN convert **bold** into real <strong> tags.
+  var safe = escapeHtml(text);
+  return safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
 function appendChatMessage(role, text){
   var messagesDiv = document.getElementById('chat-messages');
   var bubble = document.createElement('div');
   bubble.className = 'chat-msg ' + (role === 'user' ? 'chat-msg-user' : 'chat-msg-bot');
-  bubble.textContent = text;
+  if (role === 'user') {
+    bubble.textContent = text; // user input is NEVER treated as HTML
+  } else {
+    bubble.innerHTML = formatBotText(text);
+  }
   messagesDiv.appendChild(bubble);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
