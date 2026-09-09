@@ -270,11 +270,12 @@ html, body { overflow-x: hidden; max-width: 100%; }
             <!-- 3D BRAIN CANVAS -->
             <div class="brain-canvas-wrap">
               <div class="brain-canvas-box">
-                <canvas id="brain-canvas" width="560" height="560" style="background:transparent;cursor:grab;border-radius:12px;display:none;width:100%;height:100%;"></canvas>
-                <iframe id="sketchfab-brain-frame" title="UBC Plastinated Human Brain" style="width:100%;height:100%;border:0;border-radius:12px;display:block;" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen src="https://sketchfab.com/models/2df234ff65b0483fb5b5e15e40efa65d/embed?ui_infos=0&ui_watermark_link=0&ui_watermark=0&ui_stop=0&ui_help=0&ui_settings=0&dnt=1"></iframe>
+                <canvas id="brain-canvas" width="560" height="560" style="background:transparent;cursor:grab;border-radius:12px;display:block;filter:blur(14px);pointer-events:none;width:100%;height:100%;"></canvas>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(13,26,48,0.35);">
+                  <span style="background:#1B2A4A;color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;font-weight:600;letter-spacing:0.5px;border:1px solid rgba(102,152,204,0.4);">Coming Soon</span>
+                </div>
               </div>
-              <div style="font-size:9.5px;color:rgba(102,152,204,0.4);text-align:center;margin-top:4px;">Plastinated brain model courtesy of UBC HIVE / UBC Medicine — Educational Media, Dr. Claudia Krebs (Faculty Lead), shared under Creative Commons.</div>
-              <div style="font-size:10.5px;color:rgba(102,152,204,0.5);text-align:center;margin-top:6px;letter-spacing:.06em;">INTERACTIVE 3D MODEL — DRAG TO ROTATE</div>
+              <div style="font-size:10.5px;color:rgba(102,152,204,0.5);text-align:center;margin-top:6px;letter-spacing:.06em;">INTERACTIVE 3D MODEL — COMING SOON</div>
             </div>
             <!-- INFO PANEL -->
             <div class="brain-info-col">
